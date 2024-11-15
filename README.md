@@ -2,45 +2,39 @@
 
 Use Postgres' generate_series to create sequences with Django's ORM
 
-https://django-generate-series.readthedocs.io/
-
 ## Goals
 
 When using Postgres, the set-returning functions allow us to easily create sequences of numbers, dates, datetimes, etc. Unfortunately, this functionality is not currently available within the Django ORM.
 
 This project makes it possible to create such sequences, which are returned as a Django QuerySet. For instance, assuming you have an Order model, you can create a set of sequential dates and then annotate each with the number of orders placed on that date. This will ensure you have no date gaps in the resulting QuerySet. To get the same effect without this package, additional post-processing of the QuerySet with Python would be required.
 
-*New in version 1.0.0*: you can now generate cartesian products with a QuerySet or an iterable. For instance, you can create a sequence of dates that are repeated for each item in a QuerySet or iterable.
-
-## Terminology
-
-Although this packages is named django-generate-series based on Postgres' [`generate_series` set-returning function](https://www.postgresql.org/docs/current/functions-srf.html), mathematically we are creating a [sequence](https://en.wikipedia.org/wiki/Sequence) rather than a [series](https://en.wikipedia.org/wiki/Series_(mathematics)).
+_New in version 1.0.0_: you can now generate cartesian products with a QuerySet or an iterable. For instance, you can create a sequence of dates that are repeated for each item in a QuerySet or iterable.
 
 - **sequence**: Formally, "a list of objects (or events) which have been ordered in a sequential fashion; such that each member either comes before, or after, every other member."
 
-    In django-generate-series, we can generate sequences of integers, decimals, dates, datetimes, as well as the equivalent ranges of each of these types.
+  In django-generate-series, we can generate sequences of integers, decimals, dates, datetimes, as well as the equivalent ranges of each of these types.
 
 - **term**: The *n*th item in the sequence, where '*n*th' can be found using the id of the model instance.
 
-    This is the name of the field in the model which contains the term value.
+  This is the name of the field in the model which contains the term value.
 
 ## API
 
-The package includes a `generate_series` function from which you can create your own series-generating QuerySets. The field type passed into the function as `output_field` determines the resulting type of series that can be created. (Thanks, [@adamchainz](https://twitter.com/adamchainz) for the format suggestion!)
+The package includes a `generate_series` function from which you can create your own series-generating QuerySets. The field type passed into the function as `output_field` determines the resulting type of series that can be created.
 
 ### `generate_series` keyword arguments
 
-- ***start*** - The value at which the sequence should begin (required)
-- ***stop*** - The value at which the sequence should end. For range types, this is the lower value of the final term (required)
-- ***step*** - How many values to step from one term to the next. For range types, this is the step from the lower value of one term to the next. (required for non-integer types)
-- ***span*** - When generating a sequence of ranges (except for date and datetime ranges), this specifies the difference between the lower value of each term and its upper value. Typically, this is the same as the `step` value. (optional, defaults to 1 if neeeded in the query)
-- ***output_field*** - A django model field class, one of BigIntegerField, IntegerField, DecimalField, DateField, DateTimeField, BigIntegerRangeField, IntegerRangeField, DecimalRangeField, DateRangeField, or DateTimeRangeField. If not provided, the field will be determined from the type of the `start` input. (optional)
-- ***include_id*** - If set to True, an auto-incrementing `id` field will be added to the QuerySet.
-- ***max_digits*** - For decimal types, specifies the maximum digits.
-- ***decimal_places*** - For decimal types, specifies the number of decimal places.
-- ***default_bounds*** - In Django 4.1+, allows specifying bounds for list and tuple inputs. See [Django docs](https://docs.djangoproject.com/en/dev/releases/4.1/#django-contrib-postgres)
-- ***queryset*** - If provided, each `pk` in the QuerySet will be combined with the generated series as the cartesian product. This is useful for creating a series that is repeated for each `pk` in the QuerySet. (optional, only one of `queryset` or `iterable` can be provided)
-- ***iterable*** - If provided, the iterable will be combined with the generated series as the cartesian product. This is useful for creating a series that is repeated for each item in the iterable. (optional, only one of `queryset` or `iterable` can be provided)
+- **_start_** - The value at which the sequence should begin (required)
+- **_stop_** - The value at which the sequence should end. For range types, this is the lower value of the final term (required)
+- **_step_** - How many values to step from one term to the next. For range types, this is the step from the lower value of one term to the next. (required for non-integer types)
+- **_span_** - When generating a sequence of ranges (except for date and datetime ranges), this specifies the difference between the lower value of each term and its upper value. Typically, this is the same as the `step` value. (optional, defaults to 1 if neeeded in the query)
+- **_output_field_** - A django model field class, one of BigIntegerField, IntegerField, DecimalField, DateField, DateTimeField, BigIntegerRangeField, IntegerRangeField, DecimalRangeField, DateRangeField, or DateTimeRangeField. If not provided, the field will be determined from the type of the `start` input. (optional)
+- **_include_id_** - If set to True, an auto-incrementing `id` field will be added to the QuerySet.
+- **_max_digits_** - For decimal types, specifies the maximum digits.
+- **_decimal_places_** - For decimal types, specifies the number of decimal places.
+- **_default_bounds_** - In Django 4.1+, allows specifying bounds for list and tuple inputs. See [Django docs](https://docs.djangoproject.com/en/dev/releases/4.1/#django-contrib-postgres)
+- **_queryset_** - If provided, each `pk` in the QuerySet will be combined with the generated series as the cartesian product. This is useful for creating a series that is repeated for each `pk` in the QuerySet. (optional, only one of `queryset` or `iterable` can be provided)
+- **_iterable_** - If provided, the iterable will be combined with the generated series as the cartesian product. This is useful for creating a series that is repeated for each item in the iterable. (optional, only one of `queryset` or `iterable` can be provided)
 
 ### `generate_series` return value
 
@@ -131,7 +125,7 @@ Result:
     ...
     2023-04-27
 
-*Note: See [the usage examples in the docs](https://django-generate-series.readthedocs.io/en/latest/usage_examples.html) and the example project in the tests directory for further examples of usage.*
+_Note: See [the usage examples in the docs](https://django-generate-series.readthedocs.io/en/latest/usage_examples.html) and the example project in the tests directory for further examples of usage._
 
 ## Usage with partial
 
